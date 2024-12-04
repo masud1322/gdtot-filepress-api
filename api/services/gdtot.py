@@ -2,15 +2,7 @@ import requests
 import re
 import json
 from bs4 import BeautifulSoup
-import os
-import sys
-
-# Add parent directory to Python path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(os.path.dirname(current_dir))
-sys.path.insert(0, parent_dir)
-
-from config import config
+from ..config import config  # Use relative import
 
 class GDTOTService:
     def __init__(self):
