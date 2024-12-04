@@ -23,39 +23,62 @@ def extract_drive_link(url):
 
 @app.route('/')
 def home():
-    return jsonify({
-        "status": "active",
-        "endpoints": {
-            "/f/<drive_link>": "Convert to FilePress link",
-            "/gt/<drive_link>": "Convert to GDTOT link"
-        }
-    })
+    try:
+        return jsonify({
+            "status": "success",
+            "message": "API is working!",
+            "endpoints": {
+                "/f/[drive_link]": "Convert to FilePress link",
+                "/gt/[drive_link]": "Convert to GDTOT link"
+            },
+            "example": {
+                "filepress": "/f/https://drive.google.com/file/d/YOUR_FILE_ID/view",
+                "gdtot": "/gt/https://drive.google.com/file/d/YOUR_FILE_ID/view"
+            }
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 @app.route('/f/<path:drive_link>')
 def filepress_convert(drive_link):
-    clean_link = extract_drive_link(drive_link)
-    result = filepress_service.convert_link(clean_link)
-    return jsonify(result)
+    try:
+        clean_link = extract_drive_link(drive_link)
+        result = filepress_service.convert_link(clean_link)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e),
+            "service": "filepress"
+        }), 500
 
 @app.route('/gt/<path:drive_link>')
 def gdtot_convert(drive_link):
-    clean_link = extract_drive_link(drive_link)
-    gdtot_result = gdtot_service.convert_link(clean_link)
-    
-    # শুধু সাকসেস এবং লিংক রিটার্ন করি
-    if gdtot_result.get('success'):
+    try:
+        clean_link = extract_drive_link(drive_link)
+        gdtot_result = gdtot_service.convert_link(clean_link)
+        
+        if gdtot_result.get('success'):
+            return jsonify({
+                "success": True,
+                "link": gdtot_result['link'],
+                "service": "gdtot"
+            })
+        
         return jsonify({
-            "success": True,
-            "link": gdtot_result['link'],
+            "success": False,
+            "error": gdtot_result.get('error', 'Unknown error'),
             "service": "gdtot"
         })
-    
-    # এরর হলে এরর মেসেজ রিটার্ন করি
-    return jsonify({
-        "success": False,
-        "error": gdtot_result.get('error', 'Unknown error'),
-        "service": "gdtot"
-    })
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e),
+            "service": "gdtot"
+        }), 500
 
 if __name__ == '__main__':
-    app.run() 
+    app.run(debug=True) 
