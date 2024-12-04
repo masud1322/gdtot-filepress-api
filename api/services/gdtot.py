@@ -2,7 +2,7 @@ import requests
 import re
 import json
 from bs4 import BeautifulSoup
-from .config import config
+from services.config import config
 
 class GDTOTService:
     def __init__(self):

@@ -1,9 +1,14 @@
 from flask import Flask, request, jsonify
 import re
+import os
+import sys
 
-# Import services directly from current directory
-from .services.filepress import FilePressService
-from .services.gdtot import GDTOTService
+# Add current directory to Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+
+from services.filepress import FilePressService
+from services.gdtot import GDTOTService
 
 app = Flask(__name__)
 

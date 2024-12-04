@@ -1,7 +1,7 @@
 import requests
 import re
 import json
-from .config import config
+from services.config import config
 
 class FilePressService:
     def __init__(self):
