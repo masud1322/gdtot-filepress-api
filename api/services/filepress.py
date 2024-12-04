@@ -1,7 +1,15 @@
 import requests
 import re
 import json
-from api.config import config
+import os
+import sys
+
+# Add parent directory to Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(os.path.dirname(current_dir))
+sys.path.insert(0, parent_dir)
+
+from config import config
 
 class FilePressService:
     def __init__(self):
