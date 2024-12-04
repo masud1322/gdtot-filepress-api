@@ -12,35 +12,36 @@ class FilePressService:
     def extract_drive_id(self, url):
         """Extract Drive ID from URL"""
         try:
-            # Print the URL for debugging
-            print(f"Extracting ID from URL: {url}")
+            print(f"\nExtracting ID from URL: {url}")
             
-            # First try to find ID from uc format
+            # For uc format links
             if 'uc?id=' in url:
-                id_match = re.search(r'uc\?id=([a-zA-Z0-9_-]+)', url)
+                id_match = re.search(r'id=([a-zA-Z0-9_-]+)', url)
                 if id_match:
-                    return id_match.group(1)
+                    drive_id = id_match.group(1)
+                    print(f"Found ID (uc format): {drive_id}")
+                    return drive_id
             
-            # Then try other formats
-            patterns = [
-                r'/d/([a-zA-Z0-9_-]+)',
-                r'id=([a-zA-Z0-9_-]+)',
-                r'drive\.google\.com/file/d/([a-zA-Z0-9_-]+)',
-                r'[-\w]{25,}'  # Fallback pattern for direct IDs
-            ]
+            # For file/d/ format links
+            if 'file/d/' in url:
+                id_match = re.search(r'file/d/([a-zA-Z0-9_-]+)', url)
+                if id_match:
+                    drive_id = id_match.group(1)
+                    print(f"Found ID (file/d format): {drive_id}")
+                    return drive_id
             
-            for pattern in patterns:
-                match = re.search(pattern, url)
-                if match:
-                    # Print matched ID for debugging
-                    print(f"Found ID: {match.group(1)}")
-                    return match.group(1)
+            # For direct ID format
+            id_match = re.search(r'[-\w]{25,}', url)
+            if id_match:
+                drive_id = id_match.group(0)
+                print(f"Found ID (direct format): {drive_id}")
+                return drive_id
             
-            print("No ID found in URL")
+            print("No valid Drive ID found in URL")
             return None
             
         except Exception as e:
-            print(f"Error extracting ID: {str(e)}")
+            print(f"Error extracting Drive ID: {str(e)}")
             return None
     
     def convert_link(self, drive_link):

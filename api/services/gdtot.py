@@ -29,9 +29,14 @@ class GDTOTService:
             )
             
             print(f"Initial Response Status: {initial_response.status_code}")
-            print(f"Session Cookies: {session.cookies.get_dict()}")
             
-            # API রিকোয়েস্ট
+            # Clean and format drive link
+            if 'uc?id=' in drive_link:
+                file_id = re.search(r'id=([a-zA-Z0-9_-]+)', drive_link)
+                if file_id:
+                    drive_link = f'https://drive.google.com/file/d/{file_id.group(1)}/view'
+            
+            # API request
             api_url = f"{self.domain}/ajax.php?ajax=upload-link"
             
             headers = {
@@ -43,17 +48,6 @@ class GDTOTService:
                 "X-Requested-With": "XMLHttpRequest"
             }
             
-            # ড্রাইভ লিংক ফরম্যাট চেক
-            if 'drive.google.com' in drive_link:
-                # ID এক্সট্র্যাক্ট করি
-                file_id = re.search(r'[-\w]{25,}', drive_link)
-                if file_id:
-                    # যদি uc ফরম্যাটে থাকে তবে সেটাই ব্যবহার করব
-                    if 'uc?id=' in drive_link:
-                        drive_link = f'https://drive.google.com/uc?id={file_id.group(0)}&export=download'
-                    else:
-                        drive_link = f'https://drive.google.com/file/d/{file_id.group(0)}/view'
-            
             data = {
                 "url": drive_link,
                 "ajax": "upload-link"
@@ -61,13 +55,12 @@ class GDTOTService:
             
             print("\nRequest Info:")
             print(f"Drive Link: {drive_link}")
-            print(f"Cookies: {session.cookies.get_dict()}")
             
             response = session.post(
                 api_url,
                 headers=headers,
                 data=data,
-                cookies=self.cookies,
+                cookies={"crypt": self.cookies["crypt"]},
                 timeout=30
             )
             
