@@ -31,7 +31,7 @@ class GDTOTService:
                 "X-Requested-With": "XMLHttpRequest"
             }
             
-            # ড্রাই লিংক ফরম্যাট চেক
+            # ড্রাইভ লিংক ফরম্যাট চেক
             if 'drive.google.com' in drive_link:
                 # ID এক্সট্র্যাক্ট করি
                 file_id = re.search(r'[-\w]{25,}', drive_link)

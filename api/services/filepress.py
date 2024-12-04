@@ -14,7 +14,8 @@ class FilePressService:
         patterns = [
             r'/d/([a-zA-Z0-9_-]+)',
             r'id=([a-zA-Z0-9_-]+)',
-            r'drive\.google\.com/file/d/([a-zA-Z0-9_-]+)'
+            r'drive\.google\.com/file/d/([a-zA-Z0-9_-]+)',
+            r'uc\?id=([a-zA-Z0-9_-]+)'
         ]
         
         for pattern in patterns:
