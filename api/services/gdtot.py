@@ -15,9 +15,21 @@ class GDTOTService:
         try:
             session = requests.Session()
             
-            # শ্রথমে upload-link পেজ লোড করি
+            # Debug cookies
+            print("\nCookies Debug:")
+            print(f"Config Cookies: {self.cookies}")
+            print(f"Crypt Value: {self.cookies['crypt']}")
+            
+            # First load upload-link page
             upload_url = f"{self.domain}/upload-link"
-            session.get(upload_url, cookies={"crypt": self.cookies["crypt"]})
+            initial_response = session.get(
+                upload_url, 
+                cookies={"crypt": self.cookies["crypt"]},
+                timeout=30
+            )
+            
+            print(f"Initial Response Status: {initial_response.status_code}")
+            print(f"Session Cookies: {session.cookies.get_dict()}")
             
             # API রিকোয়েস্ট
             api_url = f"{self.domain}/ajax.php?ajax=upload-link"
@@ -55,7 +67,7 @@ class GDTOTService:
                 api_url,
                 headers=headers,
                 data=data,
-                cookies={"crypt": self.cookies["crypt"]},
+                cookies=self.cookies,
                 timeout=30
             )
             

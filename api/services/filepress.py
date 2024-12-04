@@ -11,18 +11,37 @@ class FilePressService:
     
     def extract_drive_id(self, url):
         """Extract Drive ID from URL"""
-        patterns = [
-            r'/d/([a-zA-Z0-9_-]+)',
-            r'id=([a-zA-Z0-9_-]+)',
-            r'drive\.google\.com/file/d/([a-zA-Z0-9_-]+)',
-            r'uc\?id=([a-zA-Z0-9_-]+)'
-        ]
-        
-        for pattern in patterns:
-            match = re.search(pattern, url)
-            if match:
-                return match.group(1)
-        return None
+        try:
+            # Print the URL for debugging
+            print(f"Extracting ID from URL: {url}")
+            
+            # First try to find ID from uc format
+            if 'uc?id=' in url:
+                id_match = re.search(r'uc\?id=([a-zA-Z0-9_-]+)', url)
+                if id_match:
+                    return id_match.group(1)
+            
+            # Then try other formats
+            patterns = [
+                r'/d/([a-zA-Z0-9_-]+)',
+                r'id=([a-zA-Z0-9_-]+)',
+                r'drive\.google\.com/file/d/([a-zA-Z0-9_-]+)',
+                r'[-\w]{25,}'  # Fallback pattern for direct IDs
+            ]
+            
+            for pattern in patterns:
+                match = re.search(pattern, url)
+                if match:
+                    # Print matched ID for debugging
+                    print(f"Found ID: {match.group(1)}")
+                    return match.group(1)
+            
+            print("No ID found in URL")
+            return None
+            
+        except Exception as e:
+            print(f"Error extracting ID: {str(e)}")
+            return None
     
     def convert_link(self, drive_link):
         """Convert Google Drive link to FilePress link"""
